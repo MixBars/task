@@ -2,10 +2,13 @@
 
 require 'sinatra'
 require 'ohm'
+require 'json'
 Ohm.redis = Redic.new('redis://127.0.0.1:6379')
 
 post '/set' do
-  status 201 if Ohm.redis.call 'SET', params[:key], params[:value]
+  request.body.rewind
+  data = JSON.parse request.body.read
+  status 201 if Ohm.redis.call 'SET', data['key'], data['value']
 end
 
 get '/get' do
